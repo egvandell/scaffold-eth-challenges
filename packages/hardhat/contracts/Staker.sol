@@ -8,7 +8,7 @@ contract Staker {
 
   ExampleExternalContract public exampleExternalContract;
 
-  // test comment
+  // test comment - 1
   mapping ( address => uint256 ) public balances;
   uint256 public constant threshold = 1 ether;
 

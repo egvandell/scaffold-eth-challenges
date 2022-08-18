@@ -8,10 +8,25 @@ contract Staker {
 
   ExampleExternalContract public exampleExternalContract;
 
+
+  mapping ( address => uint256 ) public balances;
+  uint256 public constant threshold = 1 ether;
+
+  event Stake(address _from, uint256 _id);
+
+
   constructor(address exampleExternalContractAddress) {
       exampleExternalContract = ExampleExternalContract(exampleExternalContractAddress);
   }
 
+  // Collect funds in a payable `stake()` function and track individual `balances` with a mapping:
+  // ( Make sure to add a `Stake(address,uint256)` event and emit it for the frontend <List/> display )
+  function stake(uint256 _amount_staked) public payable {
+    balances[msg.sender] = _amount_staked;
+
+    emit Stake(msg.sender, _amount_staked);
+  }
+  
   // Collect funds in a payable `stake()` function and track individual `balances` with a mapping:
   // ( Make sure to add a `Stake(address,uint256)` event and emit it for the frontend <List/> display )
 

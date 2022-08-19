@@ -21,11 +21,11 @@ contract Staker {
   // Collect funds in a payable `stake()` function and track individual `balances` with a mapping:
   // ( Make sure to add a `Stake(address,uint256)` event and emit it for the frontend <List/> display )
   function stake(uint256 _amount_staked) public payable {
-    console.log("test");
+    balances[msg.sender] = _amount_staked;
 
-//    balances[msg.sender] = _amount_staked;
+//    console.log("balances[%s] = %s ", msg.sender, _amount_staked);
 
-//    emit Stake(msg.sender, _amount_staked);
+    emit Stake(msg.sender, _amount_staked);
   }
   
   // Collect funds in a payable `stake()` function and track individual `balances` with a mapping:

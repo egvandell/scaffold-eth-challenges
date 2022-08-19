@@ -11,6 +11,8 @@ contract Staker {
   mapping ( address => uint256 ) public balances;
   uint256 public constant threshold = 1 ether;
 
+  uint256 public deadline = block.timestamp + 30 seconds;
+
   event Stake(address _from, uint256 _id);
 
 
@@ -24,17 +26,21 @@ contract Staker {
     balances[msg.sender] = _amount_staked;
 
 //    console.log("balances[%s] = %s ", msg.sender, _amount_staked);
+    console.log("address(%s).balance = %s", address(this), address(this).balance);
 
     emit Stake(msg.sender, _amount_staked);
   }
   
-  // Collect funds in a payable `stake()` function and track individual `balances` with a mapping:
-  // ( Make sure to add a `Stake(address,uint256)` event and emit it for the frontend <List/> display )
-
 
   // After some `deadline` allow anyone to call an `execute()` function
   // If the deadline has passed and the threshold is met, it should call `exampleExternalContract.complete{value: address(this).balance}()`
+/*
+function execute() public {
+  require ((block.timestamp > deadline, "Deadline not yet passed"));
+  require ((block.timestamp > deadline, "Deadline not yet passed"));
 
+  }
+*/
 
   // If the `threshold` was not met, allow everyone to call a `withdraw()` function
 

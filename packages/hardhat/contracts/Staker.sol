@@ -13,7 +13,7 @@ contract Staker {
 
   uint256 public deadline = block.timestamp + 30 seconds;
 
-  event Stake(address _from, uint256 _id);
+  event Stake(address _from, uint256 _amount_staked);
 
 
   constructor(address exampleExternalContractAddress) {
@@ -23,10 +23,12 @@ contract Staker {
   // Collect funds in a payable `stake()` function and track individual `balances` with a mapping:
   // ( Make sure to add a `Stake(address,uint256)` event and emit it for the frontend <List/> display )
   function stake(uint256 _amount_staked) public payable {
+// require the following: amt>0, timing is within the allowed window
+
     balances[msg.sender] = _amount_staked;
 
 //    console.log("balances[%s] = %s ", msg.sender, _amount_staked);
-    console.log("address(%s).balance = %s", address(this), address(this).balance);
+//    console.log("address(%s).balance = %s", address(this), address(this).balance);
 
     emit Stake(msg.sender, _amount_staked);
   }
@@ -34,13 +36,14 @@ contract Staker {
 
   // After some `deadline` allow anyone to call an `execute()` function
   // If the deadline has passed and the threshold is met, it should call `exampleExternalContract.complete{value: address(this).balance}()`
-/*
-function execute() public {
-  require ((block.timestamp > deadline, "Deadline not yet passed"));
-  require ((block.timestamp > deadline, "Deadline not yet passed"));
 
+function execute() public {
+  require (block.timestamp > deadline, "Deadline not yet passed");
+  require (block.timestamp > deadline, "Deadline not yet passed");
+  
+  console.log("block.timestamp = %s", block.timestamp);
   }
-*/
+
 
   // If the `threshold` was not met, allow everyone to call a `withdraw()` function
 

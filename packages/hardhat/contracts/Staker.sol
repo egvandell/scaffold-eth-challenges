@@ -38,9 +38,10 @@ contract Staker {
   // If the deadline has passed and the threshold is met, it should call `exampleExternalContract.complete{value: address(this).balance}()`
 
 function execute() public {
-  require (block.timestamp > deadline, "Deadline not yet passed");
-  require (block.timestamp > deadline, "Deadline not yet passed");
+//  require (block.timestamp > deadline, "Deadline not yet passed");
+//  require (block.timestamp > deadline, "Deadline not yet passed");
   
+    console.log("address(%s).balance = %s", address(this), address(this).balance);
   console.log("block.timestamp = %s", block.timestamp);
   }
 

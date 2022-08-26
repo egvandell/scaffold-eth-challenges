@@ -11,7 +11,7 @@ contract Staker {
   mapping ( address => uint256 ) public balances;
   uint256 public constant threshold = 1 ether;
 
-  uint256 public deadline = block.timestamp + 30 seconds;
+  uint256 public deadline = block.timestamp + 60 seconds;
 
   bool public openForWithdraw = false;
 
@@ -73,6 +73,10 @@ contract Staker {
   }
 
   // Add the `receive()` special function that receives eth and calls stake()
+  receive() external payable {
+    console.log("XXXXXXXXXXXXXXXXXXXXX ---- before stake");
+    stake();
+    console.log("XXXXXXXXXXXXXXXXXXXXX ---- aft stake");
 
-
+  }
 }

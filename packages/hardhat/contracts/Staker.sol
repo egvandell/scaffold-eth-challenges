@@ -36,9 +36,13 @@ contract Staker {
     emit Stake(msg.sender, msg.value);
 }
 
+  modifier notCompleted() {
+    require(exampleExternalContract.completed() == false, "exampleExternalContract is marked as complete");
+    _;
+}
   // After some `deadline` allow anyone to call an `execute()` function
   // If the deadline has passed and the threshold is met, it should call `exampleExternalContract.complete{value: address(this).balance}()`
-  function execute() public {
+  function execute() public notCompleted {
     require (block.timestamp > deadline, "Deadline not yet passed");
       
     //  console.log("address(%s).balance = %s", address(this), address(this).balance);
@@ -53,7 +57,7 @@ contract Staker {
 
   // If the `threshold` was not met, allow everyone to call a `withdraw()` function
   // Add a `withdraw()` function to let users withdraw their balance
-  function withdraw() public {
+  function withdraw() public notCompleted {
     require (openForWithdraw == true, "Contract not open for withdrawl.  Either unexecuted or executed and passed");
 
     console.log("balances[%s] = %s", msg.sender, balances[msg.sender]);

@@ -11,7 +11,7 @@ contract Staker {
   mapping ( address => uint256 ) public balances;
   uint256 public constant threshold = 1 ether;
 
-  uint256 public deadline = block.timestamp + 30 seconds;
+  uint256 public deadline = block.timestamp + 72 hours;
 
   bool public openForWithdraw = false;
 
@@ -25,13 +25,10 @@ contract Staker {
   // Collect funds in a payable `stake()` function and track individual `balances` with a mapping:
   // ( Make sure to add a `Stake(address,uint256)` event and emit it for the frontend <List/> display )
   function stake() public payable {
-    // require the following: amt>0, timing is within the allowed window
     require (msg.value > 0, "Amount must be > 0");
     require (block.timestamp < deadline, "Deadline has passed");
 
     balances[msg.sender] += msg.value;
-
-    console.log("balances[%s] = %s", msg.sender, balances[msg.sender]);
 
     emit Stake(msg.sender, msg.value);
 }
@@ -45,10 +42,6 @@ contract Staker {
   function execute() public notCompleted {
     require (block.timestamp > deadline, "Deadline not yet passed");
       
-    //  console.log("address(%s).balance = %s", address(this), address(this).balance);
-      console.log("block.timestamp = %s", block.timestamp);
-      console.log("deadline = %s", deadline);
-
     if (address(this).balance >= threshold && openForWithdraw == false) 
       exampleExternalContract.complete{value: address(this).balance}();
     else
@@ -59,10 +52,8 @@ contract Staker {
   // Add a `withdraw()` function to let users withdraw their balance
   function withdraw() public notCompleted {
     require (openForWithdraw == true, "Contract not open for withdrawl.  Either unexecuted or executed and passed");
-
-    console.log("balances[%s] = %s", msg.sender, balances[msg.sender]);
-
     require (balances[msg.sender] > 0, "0 Balance");
+
     address payable to = payable(msg.sender);
     to.transfer(balances[msg.sender]);
     balances[msg.sender] = 0;
@@ -78,9 +69,6 @@ contract Staker {
 
   // Add the `receive()` special function that receives eth and calls stake()
   receive() external payable {
-    console.log("XXXXXXXXXXXXXXXXXXXXX ---- before stake");
     stake();
-    console.log("XXXXXXXXXXXXXXXXXXXXX ---- aft stake");
-
   }
 }

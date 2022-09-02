@@ -45,5 +45,19 @@ contract Vendor is Ownable {
   }
 
   // ToDo: create a sellTokens(uint256 _amount) function:
+  function sellTokens(uint256 _amount) payable public {
+    uint256 theAmount = _amount / tokensPerEth;
 
+    bool approved = yourToken.approve(msg.sender, theAmount);
+
+    require (approved, "Was not approved");
+
+    console.log("msg.sender = %s", msg.sender);
+    console.log("address(this) = %s", address(this));
+    console.log("_amount = %s", _amount);
+    console.log("theAmount = %s", theAmount);
+
+    yourToken.transferFrom(msg.sender, address(this), theAmount);
+    
+  }
 }

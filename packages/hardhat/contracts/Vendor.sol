@@ -19,20 +19,19 @@ contract Vendor is Ownable {
 
   // ToDo: create a payable buyTokens() function:
   function buyTokens() public payable {
+    uint256 amountOfTokens = msg.value * tokensPerEth;
 
-/*
-    int256 tokens_to_transfer = msg.value * tokensPerEth;
-
-    address payable to = payable(msg.sender);
-    to.transfer(balances[msg.sender]);
-
-    yourToken.transfer();
+    yourToken.transfer(msg.sender, amountOfTokens);
     
-    emit BuyToken(buyer, amountOfETH, amountOfTokens);
-    */
+    emit BuyTokens(msg.sender, msg.value, amountOfTokens);
   }
 
   // ToDo: create a withdraw() function that lets the owner withdraw ETH
+  function withdraw() public payable {
+    // add a require to confirm the owner is the one withdrawing
+    address payable to = payable(msg.sender);
+    to.transfer(msg.value);
+  }
 
   // ToDo: create a sellTokens(uint256 _amount) function:
 

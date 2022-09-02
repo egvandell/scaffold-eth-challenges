@@ -11,13 +11,15 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const yourToken = await ethers.getContract("YourToken", deployer);
 
   // Todo: deploy the vendor
-  // await deploy("Vendor", {
-  //   from: deployer,
-  //   args: [yourToken.address], // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-  //   log: true,
-  // });
-  //
-  // const vendor = await ethers.getContract("Vendor", deployer);
+   await deploy("Vendor", {
+     from: deployer,
+     args: [yourToken.address], // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+     log: true,
+   });
+  
+   const vendor = await ethers.getContract("Vendor", deployer);
+
+   await yourToken.transfer(vendor.address, ethers.utils.parseEther("1000") );
 
   // Todo: transfer the tokens to the vendor
   // console.log("\n 🏵  Sending all 1000 tokens to the vendor...\n");
@@ -32,7 +34,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
   // ToDo: change address to your frontend address vvvv
   // console.log("\n 🤹  Sending ownership to frontend address...\n")
-  // const ownershipTransaction = await vendor.transferOwnership("** YOUR FRONTEND ADDRESS **");
+ const ownershipTransaction = await vendor.transferOwnership("0xE851e26b3D1578C2E99903b8Ff2487AAdD70528e");
   // console.log("\n    ✅ confirming...\n");
   // const ownershipResult = await ownershipTransaction.wait();
 

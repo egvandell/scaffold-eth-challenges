@@ -6,9 +6,10 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract YourToken is ERC20 {
 
-    address private FEaddress = 0xE1500d85f999EA4A249586244A57ca43B294Ff42;
+    address private FEaddress = 0xE851e26b3D1578C2E99903b8Ff2487AAdD70528e;
 
     constructor() ERC20("Gold", "GLD") {
-        _mint(FEaddress, 1000 * 10 ** 18);
+//        _mint(FEaddress, 1000 * 10 ** 18);
+        _mint(msg.sender, 1000 * 10 ** 18);
     }
 }

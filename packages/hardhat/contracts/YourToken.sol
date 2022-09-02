@@ -9,7 +9,6 @@ contract YourToken is ERC20 {
     address private FEaddress = 0xE851e26b3D1578C2E99903b8Ff2487AAdD70528e;
 
     constructor() ERC20("Gold", "GLD") {
-//        _mint(FEaddress, 1000 * 10 ** 18);
-        _mint(msg.sender, 1000 * 10 ** 18);
+        _mint(msg.sender, 5000 * 10 ** 18);
     }
 }

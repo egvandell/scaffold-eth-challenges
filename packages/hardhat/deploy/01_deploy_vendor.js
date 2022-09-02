@@ -33,10 +33,10 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   //await sleep(5000); // wait 5 seconds for transaction to propagate
 
   // ToDo: change address to your frontend address vvvv
-  // console.log("\n 🤹  Sending ownership to frontend address...\n")
+ console.log("\n 🤹  Sending ownership to frontend address...\n")
  const ownershipTransaction = await vendor.transferOwnership("0xE851e26b3D1578C2E99903b8Ff2487AAdD70528e");
-  // console.log("\n    ✅ confirming...\n");
-  // const ownershipResult = await ownershipTransaction.wait();
+ console.log("\n    ✅ confirming...\n");
+ const ownershipResult = await ownershipTransaction.wait();
 
   // ToDo: Verify your contract with Etherscan for public chains
   // if (chainId !== "31337") {

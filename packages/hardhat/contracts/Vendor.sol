@@ -1,13 +1,11 @@
-pragma solidity 0.8.4;
+pragma solidity >=0.8.4;
 // SPDX-License-Identifier: MIT
 
+import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./YourToken.sol";
 
 contract Vendor is Ownable {
-
-  //event BuyTokens(address buyer, uint256 amountOfETH, uint256 amountOfTokens);
-
   YourToken public yourToken;
 
   uint256 public constant tokensPerEth = 100;
@@ -29,8 +27,21 @@ contract Vendor is Ownable {
   // ToDo: create a withdraw() function that lets the owner withdraw ETH
   function withdraw() public payable {
     // add a require to confirm the owner is the one withdrawing
+    Ownable ownable = Ownable(address(this));
+    address owner = ownable.owner();
+    require (msg.sender == owner, "Caller must be the owner");
+
+    console.log("msg.sender = %s", msg.sender);
+    console.log("address(this) = %s", address(this));
+    console.log("owner = %s", owner);
+    console.log("msg.value = %s", msg.value);
+
+
     address payable to = payable(msg.sender);
-    to.transfer(msg.value);
+//    to.transfer(msg.value);
+
+    (bool sent, bytes memory data) = to.call{value: msg.value}("");
+    require(sent, "Failed to send Ether");
   }
 
   // ToDo: create a sellTokens(uint256 _amount) function:

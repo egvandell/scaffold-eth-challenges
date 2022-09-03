@@ -10,6 +10,7 @@ contract Vendor is Ownable {
 
   uint256 public constant tokensPerEth = 100;
   event BuyTokens(address buyer, uint256 amountOfETH, uint256 amountOfTokens);
+  event SellTokens(address buyer, uint256 amountOfETH, uint256 amountOfTokens);
 
   constructor(address tokenAddress) {
     yourToken = YourToken(tokenAddress);
@@ -24,23 +25,26 @@ contract Vendor is Ownable {
     emit BuyTokens(msg.sender, msg.value, amountOfTokens);
   }
 
-  // ToDo: create a withdraw() function that lets the owner withdraw ETH
-  function withdraw() public payable {
-    // add a require to confirm the owner is the one withdrawing
+  modifier isOwner() {
     Ownable ownable = Ownable(address(this));
     address owner = ownable.owner();
-    require (msg.sender == owner, "Caller must be the owner");
+    require (msg.sender == owner, "Caller is not the owner");
+    _;
+  }
 
-    console.log("msg.sender = %s", msg.sender);
+  // ToDo: create a withdraw() function that lets the owner withdraw ETH
+  function withdraw() public payable isOwner {
+//    console.log("msg.sender = %s", msg.sender);
     console.log("address(this) = %s", address(this));
-    console.log("owner = %s", owner);
+    console.log("address(this).balance = %s", address(this).balance);
+//    console.log("owner = %s", owner);
     console.log("msg.value = %s", msg.value);
 
-
-    address payable to = payable(msg.sender);
 //    to.transfer(msg.value);
 
-    (bool sent, bytes memory data) = to.call{value: msg.value}("");
+    require (address(this).balance > 0, "No available ETH");
+
+    (bool sent, bytes memory data) = msg.sender.call{value: msg.value}("");
     require(sent, "Failed to send Ether");
   }
 
@@ -74,6 +78,7 @@ contract Vendor is Ownable {
     console.log("address(msg.sender).balance = %s", address(msg.sender).balance);
     console.log("yourToken.balanceOf(address(msg.sender)) = %s", yourToken.balanceOf(address(msg.sender)));
     console.log("yourToken.balanceOf(address(this)) = %s", yourToken.balanceOf(address(this)));
-    
+
+    emit SellTokens(msg.sender, ethAmount, theAmount);
   }
 }

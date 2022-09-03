@@ -46,7 +46,8 @@ contract Vendor is Ownable {
 
   // ToDo: create a sellTokens(uint256 _amount) function:
   function sellTokens(uint256 _amount) payable public {
-    uint256 theAmount = _amount / tokensPerEth;
+    uint256 theAmount = _amount;// * 10 ** 18;
+    uint256 ethAmount = _amount / tokensPerEth;// * 10 ** 18;
 
     bool approved = yourToken.approve(msg.sender, theAmount);
 
@@ -56,8 +57,23 @@ contract Vendor is Ownable {
     console.log("address(this) = %s", address(this));
     console.log("_amount = %s", _amount);
     console.log("theAmount = %s", theAmount);
+    console.log("msg.value = %s", msg.value);
 
-    yourToken.transferFrom(msg.sender, address(this), theAmount);
+    console.log("address(this).balance = %s", address(this).balance);
+    console.log("address(msg.sender).balance = %s", address(msg.sender).balance);
+    console.log("yourToken.balanceOf(address(msg.sender)) = %s", yourToken.balanceOf(address(msg.sender)));
+    console.log("yourToken.balanceOf(address(this)) = %s", yourToken.balanceOf(address(this)));
+
+    yourToken.transferFrom(msg.sender, address(this), theAmount); // transfer the token to the vendor contract
+    console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+
+    (bool sent, bytes memory data) = msg.sender.call{value: ethAmount}(""); // transfer the eth from the contract to the caller
+    require(sent, "Failed to send Ether");
+
+    console.log("address(this).balance = %s", address(this).balance);
+    console.log("address(msg.sender).balance = %s", address(msg.sender).balance);
+    console.log("yourToken.balanceOf(address(msg.sender)) = %s", yourToken.balanceOf(address(msg.sender)));
+    console.log("yourToken.balanceOf(address(this)) = %s", yourToken.balanceOf(address(this)));
     
   }
 }

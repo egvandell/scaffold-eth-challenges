@@ -1,4 +1,5 @@
-pragma solidity >=0.8.4;
+//pragma solidity 0.8.4;
+pragma solidity >=0.8.0 <0.9.0;
 // SPDX-License-Identifier: MIT
 
 import "hardhat/console.sol";
@@ -27,29 +28,35 @@ contract Vendor is Ownable {
 
   modifier isOwner() {
     Ownable ownable = Ownable(address(this));
-    address owner = ownable.owner();
-    require (msg.sender == owner, "Caller is not the owner");
+    require (msg.sender == ownable.owner(), "Caller is not the owner");
     _;
   }
 
   // ToDo: create a withdraw() function that lets the owner withdraw ETH
-  function withdraw() public payable isOwner {
-//    console.log("msg.sender = %s", msg.sender);
+  function withdraw(uint256 _amount) public isOwner {
+/*
+    console.log("msg.sender = %s", msg.sender);
+    console.log("msg.sender.balance = %s", msg.sender.balance);
     console.log("address(this) = %s", address(this));
     console.log("address(this).balance = %s", address(this).balance);
 //    console.log("owner = %s", owner);
     console.log("msg.value = %s", msg.value);
 
-//    to.transfer(msg.value);
+//    address payable to = payable(msg.sender);
+//    to.transfer(_amount);
 
+    console.log("XXXXXXXXXXX TO.TRANSFER ********************");
+    console.log("msg.sender.balance = %s", msg.sender.balance);
+    console.log("address(this).balance = %s", address(this).balance);
+*/
     require (address(this).balance > 0, "No available ETH");
 
-    (bool sent, bytes memory data) = msg.sender.call{value: msg.value}("");
+    (bool sent, bytes memory data) = msg.sender.call{value: _amount}("");
     require(sent, "Failed to send Ether");
   }
 
   // ToDo: create a sellTokens(uint256 _amount) function:
-  function sellTokens(uint256 _amount) payable public {
+  function sellTokens(uint256 _amount) public {
     uint256 theAmount = _amount;// * 10 ** 18;
     uint256 ethAmount = _amount / tokensPerEth;// * 10 ** 18;
 
@@ -61,7 +68,7 @@ contract Vendor is Ownable {
     console.log("address(this) = %s", address(this));
     console.log("_amount = %s", _amount);
     console.log("theAmount = %s", theAmount);
-    console.log("msg.value = %s", msg.value);
+//    console.log("msg.value = %s", msg.value);
 
     console.log("address(this).balance = %s", address(this).balance);
     console.log("address(msg.sender).balance = %s", address(msg.sender).balance);

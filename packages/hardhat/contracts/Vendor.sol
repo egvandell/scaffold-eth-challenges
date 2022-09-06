@@ -2,7 +2,6 @@
 pragma solidity >=0.8.0 <0.9.0;
 // SPDX-License-Identifier: MIT
 
-import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./YourToken.sol";
 
@@ -26,66 +25,26 @@ contract Vendor is Ownable {
     emit BuyTokens(msg.sender, msg.value, amountOfTokens);
   }
 
-  modifier isOwner() {
-    Ownable ownable = Ownable(address(this));
-    require (msg.sender == ownable.owner(), "Caller is not the owner");
-    _;
-  }
-
   // ToDo: create a withdraw() function that lets the owner withdraw ETH
-  function withdraw(uint256 _amount) public isOwner {
-/*
-    console.log("msg.sender = %s", msg.sender);
-    console.log("msg.sender.balance = %s", msg.sender.balance);
-    console.log("address(this) = %s", address(this));
-    console.log("address(this).balance = %s", address(this).balance);
-//    console.log("owner = %s", owner);
-    console.log("msg.value = %s", msg.value);
-
-//    address payable to = payable(msg.sender);
-//    to.transfer(_amount);
-
-    console.log("XXXXXXXXXXX TO.TRANSFER ********************");
-    console.log("msg.sender.balance = %s", msg.sender.balance);
-    console.log("address(this).balance = %s", address(this).balance);
-*/
+  function withdraw() public onlyOwner {
     require (address(this).balance > 0, "No available ETH");
-
-    (bool sent, bytes memory data) = msg.sender.call{value: _amount}("");
+    (bool sent, bytes memory data) = msg.sender.call{value: address(this).balance}("");
     require(sent, "Failed to send Ether");
   }
 
   // ToDo: create a sellTokens(uint256 _amount) function:
   function sellTokens(uint256 _amount) public {
-    uint256 theAmount = _amount;// * 10 ** 18;
     uint256 ethAmount = _amount / tokensPerEth;// * 10 ** 18;
 
-    bool approved = yourToken.approve(msg.sender, theAmount);
+    bool approved = yourToken.approve(msg.sender, _amount);
 
     require (approved, "Was not approved");
 
-    console.log("msg.sender = %s", msg.sender);
-    console.log("address(this) = %s", address(this));
-    console.log("_amount = %s", _amount);
-    console.log("theAmount = %s", theAmount);
-//    console.log("msg.value = %s", msg.value);
-
-    console.log("address(this).balance = %s", address(this).balance);
-    console.log("address(msg.sender).balance = %s", address(msg.sender).balance);
-    console.log("yourToken.balanceOf(address(msg.sender)) = %s", yourToken.balanceOf(address(msg.sender)));
-    console.log("yourToken.balanceOf(address(this)) = %s", yourToken.balanceOf(address(this)));
-
-    yourToken.transferFrom(msg.sender, address(this), theAmount); // transfer the token to the vendor contract
-    console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+    yourToken.transferFrom(msg.sender, address(this), _amount); // transfer the token to the vendor contract
 
     (bool sent, bytes memory data) = msg.sender.call{value: ethAmount}(""); // transfer the eth from the contract to the caller
     require(sent, "Failed to send Ether");
 
-    console.log("address(this).balance = %s", address(this).balance);
-    console.log("address(msg.sender).balance = %s", address(msg.sender).balance);
-    console.log("yourToken.balanceOf(address(msg.sender)) = %s", yourToken.balanceOf(address(msg.sender)));
-    console.log("yourToken.balanceOf(address(this)) = %s", yourToken.balanceOf(address(this)));
-
-    emit SellTokens(msg.sender, ethAmount, theAmount);
+    emit SellTokens(msg.sender, ethAmount, _amount);
   }
 }

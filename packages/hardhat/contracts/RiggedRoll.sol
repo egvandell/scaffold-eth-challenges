@@ -20,5 +20,7 @@ contract RiggedRoll is Ownable {
 
 
     //Add receive() function so contract can receive Eth
-    
+    function receieve() public payable {
+        
+    }
 }

@@ -58,12 +58,12 @@ contract DEX {
      * NOTE: since ratio is 1:1, this is fine to initialize the totalLiquidity (wrt to balloons) as equal to eth balance of contract.
      */
     function init(uint256 tokens) public payable returns (uint256) {
-        require (totalLiquidity == 0, "Contract has already been funded");
+        require (totalLiquidity == 0, "Contract already has liquidity");
+        totalLiquidity = address(this).balance;
 
         liquidity[msg.sender] = totalLiquidity; // specifies the balance provided from the sender
         require(token.transferFrom(msg.sender, address(this), tokens));
 
-        totalLiquidity = address(this).balance;
         return totalLiquidity;
     }
 

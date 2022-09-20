@@ -26,7 +26,7 @@ contract DEX {
     /**
      * @notice Emitted when ethToToken() swap transacted
      */
-    event EthToTokenSwap();
+    event EthToTokenSwap(address, string, uint256, uint256);
 
     /**
      * @notice Emitted when tokenToEth() swap transacted
@@ -92,12 +92,30 @@ contract DEX {
     /**
      * @notice sends Ether to DEX in exchange for $BAL
      */
-    function ethToToken() public payable returns (uint256 tokenOutput) {}
+    function ethToToken() public payable returns (uint256 tokenOutput) {
+        require (msg.value > 0, "Nothing received");
+        uint256 ethReserve = address(this).balance.sub(msg.value);
+        uint256 token_reserve = token.balanceOf(address(this));
+        tokenOutput = price(msg.value, ethReserve, token_reserve);
+
+        require(token.transfer(msg.sender, tokenOutput), "ethToToken(): reverted swap.");
+        emit EthToTokenSwap(msg.sender, "Eth to Balloons", msg.value, tokenOutput);
+        return tokenOutput;
+    }
 
     /**
      * @notice sends $BAL tokens to DEX in exchange for Ether
      */
-    function tokenToEth(uint256 tokenInput) public returns (uint256 ethOutput) {}
+    function tokenToEth(uint256 tokenInput) public returns (uint256 ethOutput) {
+        require (tokenInput > 0, "Nothing received");
+        uint256 token_reserve = token.balanceOf(address(this));
+        ethOutput = price(tokenInput, token_reserve, address(this).balance);
+        require(token.transferFrom(msg.sender, address(this), tokenInput), "tokenToEth(): reverted swap.");
+        (bool sent, ) = msg.sender.call{ value: ethOutput }(""); // transfer the eth from the contract to the caller
+        require(sent, "Failed to send Ether");
+        emit EthToTokenSwap(msg.sender, "Balloons to Eth", ethOutput, tokenInput);
+        return ethOutput;
+        }
 
     /**
      * @notice allows deposits of $BAL and $ETH to liquidity pool
